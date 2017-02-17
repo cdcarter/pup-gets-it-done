@@ -1,11 +1,11 @@
 """ Functional tests for the Obey simple list app """
 import time
-import unittest
+from django.test import LiveServerTestCase
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
     """ A Simple Visitor Test Flow """
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -28,7 +28,7 @@ class NewVisitorTest(unittest.TestCase):
         """ Jason, a power user, can start a list
         and share it with a friend """
 
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # He sees that it's a todolist app! :eyeroll:
         self.assertIn('To-Do', self.browser.title)
@@ -60,7 +60,4 @@ class NewVisitorTest(unittest.TestCase):
         # Jason opens that link up
 
         # The todo list is there.
-
-if __name__ == '__main__':
-    unittest.main()
-    
+        
