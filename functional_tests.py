@@ -1,8 +1,9 @@
 """ Functional tests for the Obey simple list app """
-
+import time
 import unittest
 
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 class NewVisitorTest(unittest.TestCase):
     """ A Simple Visitor Test Flow """
@@ -20,16 +21,30 @@ class NewVisitorTest(unittest.TestCase):
 
         # He sees that it's a todolist app! :eyeroll:
         self.assertIn('To-Do', self.browser.title)
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('To-Do', header_text)
 
         # He is offered to enter a todo
-        self.fail('Finish writing the test, dude!')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(
+            inputbox.get_attribute('placeholder'),
+            'Enter a to-do'
+        )
         # He types "Pick out a present for pup" into the box
+        inputbox.send_keys('Pick out a present for pup')
 
         # When he hits update, the page updates, and now the page
         # lists "1: Pick out a present for pup"
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertTrue(
+            any(row.text == '1: Pick out a present for pup' for row in rows)
+        )
         # There is still a text box for adding another item
-
+        self.fail('finish your test, puppy')
         # He enters "Order present for pup"
 
         # The page updates again and shows two items on the list
