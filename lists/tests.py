@@ -1,3 +1,5 @@
+""" Unit tests for the lists app """
+
 from django.test import TestCase
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
