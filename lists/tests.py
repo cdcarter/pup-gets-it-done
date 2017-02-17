@@ -12,12 +12,35 @@ class HomePageTest(TestCase):
 
         self.assertTemplateUsed(response, 'home.html')
 
-    def test_handle_post_request(self):
-        """ The / endpoint allows POST with a new todo """
+    def test_home_page_loads_mutiple_items(self):
+        """ The home page table renders a row for each item """
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+
+        response = self.client.get('/')
+
+        self.assertIn('itemey 1', response.content.decode())
+        self.assertIn('itemey 2', response.content.decode())
+
+    def test_save_post_requests(self):
+        """ The / endpoint creates a new todo on POST """
+        self.client.post('/', data={'item_text': 'A new list item'})
+
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual('A new list item', new_item.text)
+
+    def test_redirect_after_post(self):
+        """ / endpoint redirects back to / on POST """
         response = self.client.post('/', data={'item_text': 'A new list item'})
 
-        self.assertIn('A new list item', response.content.decode())
-        self.assertTemplateUsed(response, 'home.html')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
+
+    def test_dont_save_get_request(self):
+        """ Test that no items are created on a GET """
+        self.client.get('/')
+        self.assertEqual(Item.objects.count(), 0)
 
 class ItemModelTest(TestCase):
     """ Unit Tests for the Item ORM Model """

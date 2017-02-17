@@ -53,7 +53,7 @@ class NewVisitorTest(unittest.TestCase):
 
         # The page updates again and shows two items on the list
         self._check_for_row_in_list_table('1: Pick out a present for pup')
-        self._check_for_row_in_list_table('1: Order present for pup')
+        self._check_for_row_in_list_table('2: Order present for pup')
 
         # Jason can copy the link at the bottom of the page for this list.
         self.fail('finish tests')
