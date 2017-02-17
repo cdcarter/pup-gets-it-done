@@ -3,3 +3,5 @@ geckodriver.log
 __pycache__
 *.pyc
 tags
+.venv/
+.vscode/
