@@ -1,3 +1,7 @@
+""" Lists app views
+"""
 from django.shortcuts import render
 
-# Create your views here.
+def home_page():
+    """ The home_page view, which invites a user to engage """
+    pass

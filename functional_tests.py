@@ -6,7 +6,6 @@ from selenium import webdriver
 
 class NewVisitorTest(unittest.TestCase):
     """ A Simple Visitor Test Flow """
-
     def setUp(self):
         self.browser = webdriver.Firefox()
 

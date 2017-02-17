@@ -1,6 +1,15 @@
 from django.test import TestCase
+from django.core.urlresolvers import resolve
+from django.http import HttpRequest
 
-class SmokeTest(TestCase):
-    
-    def test_bad_maths(self):
-        self.assertEquals(1+2,5)
+from lists.views import home_page
+
+class HomePageTest(TestCase):
+    """ Unit Tests for the home_page view
+    """
+    def test_root_url_home_page(self):
+        """ the root URL should resolve to the home_page view """
+        found = resolve('/')
+        self.assertEqual(found.func, home_page)
+
+
