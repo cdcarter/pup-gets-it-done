@@ -16,6 +16,8 @@ class NewVisitorTest(unittest.TestCase):
         """ Jason, a power user, can start a list
         and share it with a friend """
 
+        self.browser.get('http://localhost:8000')
+
         # He sees that it's a todolist app! :eyeroll:
         self.assertIn('To-Do', self.browser.title)
 
