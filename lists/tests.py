@@ -9,8 +9,12 @@ class HomePageTest(TestCase):
         """ The / endpoint should be a todo list home """
         response = self.client.get('/')
 
-        html = response.content.decode('utf8')
-        self.assertTrue(html.startswith('<html>'))
-        self.assertIn('<title>To-Do List</title>', html)
-
         self.assertTemplateUsed(response, 'home.html')
+
+    def test_handle_POST_request(self):
+        """ The / endpoint allows POST with a new todo """
+        response = self.client.post('/', data={'item_text': 'A new list item'})
+
+        self.assertIn('A new list item', response.content.decode())
+        self.assertTemplateUsed(response, 'home.html')
+        
