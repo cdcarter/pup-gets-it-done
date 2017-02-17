@@ -40,15 +40,33 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Pick out a present for pup', [row.text for row in rows])
+        self.assertIn(
+            '1: Pick out a present for pup',
+            [row.text for row in rows]
+        )
+
         # There is still a text box for adding another item
-        self.fail('finish your test, puppy')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+
         # He enters "Order present for pup"
+        inputbox.send_keys('Order present for pup')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # The page updates again and shows two items on the list
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(
+            '1: Pick out a present for pup',
+            [row.text for row in rows]
+        )
+        self.assertIn(
+            '2: Order present for pup',
+            [row.text for row in rows]
+        )
 
         # Jason can copy the link at the bottom of the page for this list.
-
+        self.fail('finish tests')
         # Jason opens that link up
 
         # The todo list is there.
