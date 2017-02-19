@@ -3,6 +3,7 @@
 from django.test import TestCase
 from lists.models import Item
 
+
 class HomePageTest(TestCase):
     """ Unit Tests for the home_page view
     """
@@ -11,16 +12,6 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
 
         self.assertTemplateUsed(response, 'home.html')
-
-    def test_home_page_loads_mutiple_items(self):
-        """ The home page table renders a row for each item """
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
-
-        response = self.client.get('/')
-
-        self.assertIn('itemey 1', response.content.decode())
-        self.assertIn('itemey 2', response.content.decode())
 
     def test_save_post_requests(self):
         """ The / endpoint creates a new todo on POST """
@@ -35,12 +26,13 @@ class HomePageTest(TestCase):
         response = self.client.post('/', data={'item_text': 'A new list item'})
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/lists/the-only-list')
 
     def test_dont_save_get_request(self):
         """ Test that no items are created on a GET """
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
+
 
 class ItemModelTest(TestCase):
     """ Unit Tests for the Item ORM Model """
@@ -60,3 +52,22 @@ class ItemModelTest(TestCase):
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, 'The first item (ever) written')
         self.assertEqual(second_saved_item.text, second_item.text)
+
+
+class ListViewTest(TestCase):
+    """ Unit tests for the List view """
+
+    def test_display_lists(self):
+        """ The home page table renders a row for each item """
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+
+        response = self.client.get('/lists/the-only-list/')
+
+        self.assertIn('itemey 1', response.content.decode())
+        self.assertIn('itemey 2', response.content.decode())
+
+    def test_uses_list_template(self):
+        """ Lists are rendered w/ the list template """
+        response = self.client.get('/lists/the-only-list/')
+        self.assertTemplateUsed(response, 'list.html')
