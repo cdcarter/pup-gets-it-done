@@ -1,4 +1,5 @@
 """ Functional tests for the Obey simple list app """
+import sys
 import time
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -12,6 +13,16 @@ MAX_WAIT = 10
 
 class NewVisitorTest(StaticLiveServerTestCase):
     """ A Simple Visitor Test Flow """
+
+    @classmethod
+    def setUpClass(cls):
+        for arg in sys.argv:
+            if 'liveserver' in arg:
+                cls.server_url = 'http://' + arg.split('=')[1]
+                return
+        super().setUpClass()
+        cls.server_url = cls.live_server_url
+
     def setUp(self):
         self.browser = webdriver.Firefox()
 
@@ -39,7 +50,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def test_start_list_one_user(self):
         """ Jason, a power user, can start a list """
 
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 
         # He sees that it's a todolist app! :eyeroll:
         self.assertIn('To-Do', self.browser.title)
@@ -69,7 +80,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
     def test_many_users_many_urls(self):
         """ Multiple users start lists at different urls. """
 
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         self._type_and_submit_item('Pick out a present for pup')
         self._wait_for_row_in_list_table('1: Pick out a present for pup')
 
@@ -80,7 +91,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         self.browser.quit()
         self.browser = webdriver.Firefox()
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
 
         # he doesn't see jasons list, thank goodness!
         page_text = self.browser.find_element_by_tag_name('body').text
@@ -100,7 +111,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def test_layout_and_styling(self):
         """ The home page looks roughly what we expect it to """
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.server_url)
         self.browser.set_window_size(1024, 768)
 
         inputbox = self.browser.find_element_by_id('id_new_item')
