@@ -5,3 +5,4 @@ __pycache__
 tags
 .venv/
 .vscode/
+*.DS_Store
