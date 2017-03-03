@@ -1,4 +1,4 @@
-""" Unit tests for the lists app """
+""" Unit tests for the lists app views """
 
 from django.test import TestCase
 from lists.models import Item, List
@@ -14,39 +14,6 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response, 'home.html')
 
 
-class ItemListModelTest(TestCase):
-    """ Unit Tests for the Item ORM Model """
-    def test_save_and_retrieve_items(self):
-        """ Basic use of the DJango ORM """
-        list_ = List()
-        list_.save()
-
-        first_item = Item()
-        first_item.text = 'The first item (ever) written'
-        first_item.list = list_
-        first_item.save()
-
-        second_item = Item()
-        second_item.text = 'the Second item written'
-        second_item.list = list_
-        second_item.save()
-
-        saved_list = List.objects.first()
-        self.assertEqual(saved_list, list_)
-
-        saved_items = Item.objects.all()
-        self.assertEqual(saved_items.count(), 2)
-        first_saved_item = saved_items[0]
-        second_saved_item = saved_items[1]
-        self.assertEqual(
-            first_saved_item.text,
-            'The first item (ever) written'
-        )
-        self.assertEqual(second_saved_item.text, second_item.text)
-        self.assertEqual(first_saved_item.list, list_)
-        self.assertEqual(second_saved_item.list, list_)
-
-
 class ListViewTest(TestCase):
     """ Unit tests for the List view """
 
@@ -59,7 +26,7 @@ class ListViewTest(TestCase):
         Item.objects.create(text='other list item 1', list=other_list)
         Item.objects.create(text='other list item 2', list=other_list)
 
-        response = self.client.get(f'/lists/{correct_list.id}/')
+        response = self.client.get('/lists/{}/'.format(correct_list.id))
 
         self.assertIn('itemey 1', response.content.decode())
         self.assertIn('itemey 2', response.content.decode())
@@ -69,7 +36,7 @@ class ListViewTest(TestCase):
     def test_uses_list_template(self):
         """ Lists are rendered w/ the list template """
         list_ = List.objects.create()
-        response = self.client.get(f'/lists/{list_.id}/')
+        response = self.client.get('/lists/{}/'.format(list_.id))
         self.assertTemplateUsed(response, 'list.html')
 
     def test_save_post_requests(self):
@@ -86,12 +53,13 @@ class ListViewTest(TestCase):
             '/lists/new', data={'item_text': 'A new list item'}
         )
         new_list = List.objects.first()
-        self.assertRedirects(response, f'/lists/{new_list.id}/')
+        self.assertRedirects(response, '/lists/{}/'.format(new_list.id))
 
     def test_passes_list_to_template(self):
-        other_list = List.objects.create()
+        """ The right list is passed to the template """
+        _ = List.objects.create()
         correct_list = List.objects.create()
-        response = self.client.get(f'/lists/{correct_list.id}/')
+        response = self.client.get('/lists/{}/'.format(correct_list.id))
         self.assertEqual(response.context['list'], correct_list)
 
 
@@ -101,11 +69,11 @@ class NewItemTest(TestCase):
     def test_can_save_to_existing_list(self):
         """ POSTing /lists/id/add_item adds an item! """
 
-        other_list = List.objects.create()
+        _ = List.objects.create()
         correct_list = List.objects.create()
 
         self.client.post(
-            f'/lists/{correct_list.id}/add_item',
+            '/lists/{}/add_item'.format(correct_list.id),
             data={'item_text': 'A new item for an existing list'}
         )
 
@@ -119,8 +87,8 @@ class NewItemTest(TestCase):
         correct_list = List.objects.create()
 
         response = self.client.post(
-            f'/lists/{correct_list.id}/add_item',
+            '/lists/{}/add_item'.format(correct_list.id),
             data={'item_text': 'A new item for an existing list'}
         )
 
-        self.assertRedirects(response, f'/lists/{correct_list.id}/')
+        self.assertRedirects(response, '/lists/{}/'.format(correct_list.id))
