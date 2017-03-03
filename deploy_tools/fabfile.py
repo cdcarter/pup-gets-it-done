@@ -1,4 +1,7 @@
-""" Deployment Scripts for pupgetshingsdone.com """
+""" Deployment Scripts for pupgetshingsdone.com 
+
+TODO: Replace with https://github.com/tomerfiliba/plumbum
+"""
 # pylint: skip-file
 
 from fabric.contrib.files import append, exists, sed
