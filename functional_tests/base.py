@@ -2,8 +2,6 @@
 import sys
 import time
 
-from unittest import skip
-
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium import webdriver
@@ -31,18 +29,27 @@ class FunctionalTest(StaticLiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def _wait_for_row_in_list_table(self, row_text):
+    def wait_for(self, assertion):
+        """ Wait for an assertion to pass or timeout """
         start_time = time.time()
         while True:
             try:
-                table = self.browser.find_element_by_id('id_list_table')
-                rows = table.find_elements_by_tag_name('tr')
-                self.assertIn(row_text, [row.text for row in rows])
-                return
+                return assertion()
             except (AssertionError, WebDriverException) as ex:
                 if time.time() - start_time > MAX_WAIT:
                     raise ex
                 time.sleep(0.1)
+
+    def _wait_for_row_in_list_table(self, row_text):
+        def _assert_item(row_text):
+            table = self.browser.find_element_by_id('id_list_table')
+            rows = table.find_elements_by_tag_name('tr')
+            self.assertIn(row_text, [row.text for row in rows])
+
+        self.wait_for(
+            lambda: _assert_item(row_text)
+        )
+        return
 
     def _type_and_submit_item(self, item_text):
         inputbox = self.browser.find_element_by_id('id_new_item')
