@@ -13,7 +13,7 @@ class ItemValidationTest(FunctionalTest):
 
         # ryan goes to the site and gets confused and presses enter
         self.browser.get(self.server_url)
-        self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
+        self.get_item_input_box().send_keys(Keys.ENTER)
 
         # the page refreshes and he gets usage guidance, e.g. fill in
         # the form, sweetie
@@ -28,7 +28,7 @@ class ItemValidationTest(FunctionalTest):
         self._wait_for_row_in_list_table('1: Buy Jason a Photo')
 
         # cat hits enter again...cause ugh cat.
-        self.browser.find_element_by_id('id_new_item').send_keys(Keys.ENTER)
+        self.get_item_input_box().send_keys(Keys.ENTER)
 
         # same error! wow!
 
